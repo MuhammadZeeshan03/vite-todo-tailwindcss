@@ -40,15 +40,9 @@ function App() {
             onChange={(e) => setTodos(e.target.value)} />
           <button type="submit" className="bg-red-600 text-white py-3 px-8 rounded-lg mb-8" >Add Todo</button>
         </form>
-
         <div className="todo-show-area">
-
           <ul>
-
-
-
             {todoList.map((singleTodo, index) => {
-
               return (
                 <li key={index} className="bg-black flex justify-between text-white py-5 rounded-lg text-3xl mb-2 px-5">{singleTodo.todoName} <span className="text-red-600 cursor-pointer "
                   onClick={() => deleteTodo(singleTodo.todoName)}
@@ -57,10 +51,6 @@ function App() {
                 </li>
               )
             })}
-
-
-
-
           </ul>
 
         </div>
