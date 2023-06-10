@@ -1,26 +1,69 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 function App() {
   const [todo, setTodos] = useState("");
   const [todoList, setTodoList] = useState([]);
 
+  useEffect(() => {
+    fetchTodo();
+  }, []);
 
-  const handleForm = (e) => {
+  const fetchTodo = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/todo/getAllTodo');
+      const data = await response.json();
+      setTodoList(data);
+
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  const addTodo = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/todo/createTodo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: todo
+        })
+      });
+      const data = await response.json();
+      setTodoList([...todoList, data]);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+
+  const handleForm = async (e) => {
 
     e.preventDefault();
-
-    setTodoList([...todoList, { todoName: todo }]);
+    await addTodo();
     setTodos("");
   }
-  console.log(todoList);
 
-  const deleteTodo = (deleteValue) => {
-    const filterTodo = [
-      ...todoList.filter((singleTodo) => {
-        return singleTodo.todoName !== deleteValue;
-      })]
+  const deleteTodo = async (deleteValue) => {
 
-    setTodoList(filterTodo);
+    console.log(deleteValue);
+    try {
+
+      await fetch("http://localhost:3000/todo/deleteTodo", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          _id: deleteValue,
+        }),
+
+      })
+      
+
+
+    }
+    catch (err) {
+      console.log(err);
+    }
+
   }
 
   return (
@@ -42,10 +85,10 @@ function App() {
         </form>
         <div className="todo-show-area">
           <ul>
-            {todoList.map((singleTodo, index) => {
+            {todoList.map((singleTodo) => {
               return (
-                <li key={index} className="bg-black flex justify-between text-white py-5 rounded-lg text-3xl mb-2 px-5">{singleTodo.todoName} <span className="text-red-600 cursor-pointer "
-                  onClick={() => deleteTodo(singleTodo.todoName)}
+                <li key={singleTodo._id} className="bg-black flex justify-between text-white py-5 rounded-lg text-3xl mb-2 px-5">{singleTodo.title} <span className="text-red-600 cursor-pointer "
+                  onClick={() => deleteTodo(singleTodo._id)}
                 >X</span>
 
                 </li>
@@ -56,8 +99,6 @@ function App() {
         </div>
       </div>
     </div>
-
-
   )
 }
 
